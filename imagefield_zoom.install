@@ -1,0 +1,35 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+
+/**
+ * Implementation of hook_requirements().
+ * @param $phase
+ * @return array
+ */
+function imagefield_zoom_requirements($phase) {
+  $requirements = array();
+
+  switch ($phase) {
+    case 'install':
+    case 'runtime':
+      $file_exists = file_exists(DRUPAL_ROOT . '/libraries/jquery_zoom/js/jquery.zoom.min.js');
+
+      if ($file_exists) {
+        $message = t('JQuery Zoom plugin detected in %path', ['%path' => '/libraries/jquery_zoom.']);
+      } else {
+        $message = t('JQuery Zoom plugin was not found. Please <a href=":repository_url" target="_blank">download it</a> put the jquery.zoom.min.js file in the root (/libraries/jquery_zoom/js/jquery.zoom.min.js).', [':repository_url' => 'https://github.com/jackmoore/zoom']);
+      }
+
+      $requirements['imagefield_zoom'] = [
+        'title' => t('Imagefield Zoom Plugin'),
+        'value' => $message,
+        'severity' => $file_exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+      ];
+
+      break;
+  }
+
+  return $requirements;
+}
